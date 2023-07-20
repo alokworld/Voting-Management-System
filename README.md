@@ -4,6 +4,10 @@
 
 Created a python-based UI project, inspired by real-world voting machine.It is aimed to maintain full transparency and security in polling process, including a virtual VVPAT. This project is made with the Tkinter libaray.
 
+# Video Demonstration
+https://youtu.be/m9XVym262Dg
+Above there is a video demonstration. Note: There have been some changes introduced in the project recently. 
+
 # Working
 1. At first, an authority window will appear, where the authorized person has to enter a passkey, without which the voting won't start.
 2. If the authorized person enter a wrong passkey, there would be a warning message.
