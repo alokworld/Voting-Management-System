@@ -4,23 +4,32 @@ import tkinter as tk
 import sqlite3
 from CentralBody.Passkey import Passkey
 
-
 ob = Passkey()
-#List for Names
-l=[]
 
-class MainSetUp:
+class VotingMachine:
     def __init__(self):
+        self.__l = []  # Encapsulated list
 
-        self.key = ob._Passkey__pass
-        self.conn = sqlite3.connect('test.db')
+        self.__key = ob._Passkey__pass
+        self.__conn = sqlite3.connect('test.db')
 
-        self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT Name,id FROM Election")
+        self.__cursor = self.__conn.cursor()
+        self.__cursor.execute("SELECT Name, id FROM Election")
 
-        for row in self.cursor:
-            l.append(row[0])
-            l.append(row[1])
+        for row in self.__cursor:
+            self.__l.append(row[0])
+            self.__l.append(row[1])
+
+    def get_candidate_list(self):
+        return self.__l
+
+    def get_passkey(self):
+        return self.__key
+
+    def get_connection(self):
+        return self.__conn
+    
+
 
 top=Tk()
 voter=Tk()
@@ -30,7 +39,7 @@ radio=IntVar()
     
 
 def voteclose():
-    if mystring2.get()==vote_instance.key:
+    if mystring2.get()==vote_instance.get_passkey():
         voter.destroy()
         print("Voting Closed Successfully!!!")
     else:
@@ -79,9 +88,9 @@ def vote():
     auth=Label(voter,text="Choose Your Candidate").place(x=100,y=50)
 
 
-    submitbtn=Button(voter,text=l[0],activebackground="Red",command=lambda: selection1(vote_instance.conn)).place(x=100,y=120)
-    submitbt2=Button(voter,text=l[2],activebackground="Red",command=lambda: selection2(vote_instance.conn)).place(x=100,y=180)
-    submitbtn3=Button(voter,text=l[4],activebackground="Red",command=lambda: selection3(vote_instance.conn)).place(x=100,y=240)
+    submitbtn=Button(voter,text=l[0],activebackground="Red",command=lambda: selection1(vote_instance.get_connection())).place(x=100,y=120)
+    submitbt2=Button(voter,text=l[2],activebackground="Red",command=lambda: selection2(vote_instance.get_connection())).place(x=100,y=180)
+    submitbtn3=Button(voter,text=l[4],activebackground="Red",command=lambda: selection3(vote_instance.get_connection())).place(x=100,y=240)
 
     auth=Label(voter,text="For Authority Use Only").place(x=100,y=320)
     e1=Entry(voter,text="Authority Only",textvariable=mystring2,show='*').place(x=100,y=340)
@@ -89,13 +98,14 @@ def vote():
     voter.mainloop()
 
 def get_value():
-    if(mystring.get()==vote_instance.key):
+    if(mystring.get()==vote_instance.get_passkey()):
         print("Let's Go")
         vote()
     else:
         messagebox.showwarning("Warning!", "Wrong Passkey")
 
-vote_instance=MainSetUp()
+vote_instance=VotingMachine()
+l = vote_instance.get_candidate_list()
 top.title("Welcome To Vote Management System by Alok Tripathi")
 top.geometry("500x400")
 auth=Label(top,text="Enter Passkey for Authority Access").place(x=180,y=100)
@@ -103,4 +113,4 @@ e1=Entry(top,textvariable=mystring,show='*').place(x=200,y=150)
 submitbtn=Button(top,text="Submit",activebackground="Red",command=get_value).place(x=240,y=200)
 top.mainloop()
 
-vote_instance.conn.close()
+vote_instance.get_connection().close()
