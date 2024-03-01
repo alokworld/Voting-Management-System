@@ -1,12 +1,13 @@
 import sqlite3
 from CentralBody.Passkey import Passkey
+import hashlib
 
 vote_instance=Passkey()
 
 conn = sqlite3.connect('test.db')
 def result():
     s=""
-    while s!=vote_instance._Passkey__pass:
+    while hashlib.sha256(s.encode()).hexdigest()!=vote_instance.encrypted:
         print("For Accessing The Result Enter Passkey:")
         s=input()
 
