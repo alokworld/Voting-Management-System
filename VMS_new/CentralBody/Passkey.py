@@ -1,3 +1,6 @@
+import hashlib
+
 class Passkey:
+    _p="xyz"
     def __init__(self):
-        self.__pass="xyz"
+        self.encrypted=hashlib.sha256(Passkey._p.encode()).hexdigest()
