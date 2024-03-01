@@ -3,14 +3,16 @@ from tkinter import messagebox
 import tkinter as tk
 import sqlite3
 from CentralBody.Passkey import Passkey
+import hashlib
 
+#Object of the imported Passkey class
 ob = Passkey()
 
 class VotingMachine:
     def __init__(self):
         self.__l = []  # Encapsulated list
 
-        self.__key = ob._Passkey__pass
+        self.__key = ob.encrypted
         self.__conn = sqlite3.connect('test.db')
 
         self.__cursor = self.__conn.cursor()
@@ -30,16 +32,16 @@ class VotingMachine:
         return self.__conn
     
 
-
+#Components needed for GUI
 top=Tk()
 voter=Tk()
 mystring=tk.StringVar(top)
 mystring2=tk.StringVar(voter)
 radio=IntVar()
     
-
+#Function for vote closing
 def voteclose():
-    if mystring2.get()==vote_instance.get_passkey():
+    if hashlib.sha256(mystring2.get().encode()).hexdigest()==vote_instance.get_passkey():
         voter.destroy()
         print("Voting Closed Successfully!!!")
     else:
@@ -80,6 +82,7 @@ def selection3(conn):
     ''',(id,))
     conn.commit()
 
+#Here Voting Takes Place
 def vote():
     top.destroy()
     
@@ -97,12 +100,14 @@ def vote():
     submitbtn=Button(voter,text="Submit",activebackground="Red",command=voteclose).place(x=100,y=360)
     voter.mainloop()
 
+#Authentication to start vote
 def get_value():
-    if(mystring.get()==vote_instance.get_passkey()):
+    if(hashlib.sha256(mystring.get().encode()).hexdigest()==vote_instance.get_passkey()):
         print("Let's Go")
         vote()
     else:
         messagebox.showwarning("Warning!", "Wrong Passkey")
+
 
 vote_instance=VotingMachine()
 l = vote_instance.get_candidate_list()
